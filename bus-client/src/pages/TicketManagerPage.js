@@ -6,7 +6,7 @@ export default function TicketManagerPage() {
     const [tickets, setTickets] = useState([]);
 
     const carregarTickets = () => {
-        axios.get('http://localhost:5001/tickets')
+        axios.get('https://controle-passagens.onrender.com/tickets')
             .then(res => setTickets(res.data))
             .catch(() => alert('Erro ao carregar tickets'));
     };
