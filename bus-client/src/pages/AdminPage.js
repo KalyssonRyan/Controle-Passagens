@@ -88,20 +88,52 @@ export default function AdminPage() {
             </div>
 
             <h4>Ônibus Cadastrados</h4>
-            {buses.map(bus => (
-                <div key={bus._id} className="card mb-3 p-3">
-                    <h5>{bus.name}</h5>
-                    <p><strong>Total de Vagas:</strong> {bus.totalSeats}</p>
-                    <p>Idosos: {bus.reserved.elderly}/{bus.limits.elderly}</p>
-                    <p>Adolescentes: {bus.reserved.teen}/{bus.limits.teen}</p>
-                    <p>Comum: {bus.reserved.common}/{bus.limits.common}</p>
+{buses.map(bus => (
+    <div key={bus._id} className="card mb-3 p-3">
+        <h5>{bus.name}</h5>
+        <p><strong>Total de Vagas:</strong> {bus.totalSeats}</p>
+        <p>Idosos: {bus.reserved.elderly}/{bus.limits.elderly}</p>
+        <p>Adolescentes: {bus.reserved.teen}/{bus.limits.teen}</p>
+        <p>Comum: {bus.reserved.common}/{bus.limits.common}</p>
 
-                    <div className="mt-2">
-                        <button onClick={() => startEditing(bus)} className="btn btn-warning btn-sm me-2">Editar</button>
-                        <button onClick={() => deleteBus(bus._id)} className="btn btn-danger btn-sm">Excluir</button>
+        <div className="mt-2">
+            <button onClick={() => startEditing(bus)} className="btn btn-warning btn-sm me-2">Editar</button>
+            <button
+                className="btn btn-danger btn-sm"
+                data-bs-toggle="modal"
+                data-bs-target={`#confirmDeleteModal-${bus._id}`}
+            >
+                Excluir
+            </button>
+        </div>
+
+        {/* Modal de confirmação */}
+        <div className="modal fade" id={`confirmDeleteModal-${bus._id}`} tabIndex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+            <div className="modal-dialog modal-dialog-centered">
+                <div className="modal-content">
+                    <div className="modal-header">
+                        <h5 className="modal-title">Confirmar Exclusão</h5>
+                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                    </div>
+                    <div className="modal-body">
+                        Tem certeza que deseja excluir o ônibus <strong>{bus.name}</strong>?
+                    </div>
+                    <div className="modal-footer">
+                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button
+                            type="button"
+                            className="btn btn-danger"
+                            data-bs-dismiss="modal"
+                            onClick={() => deleteBus(bus._id)}
+                        >
+                            Confirmar Exclusão
+                        </button>
                     </div>
                 </div>
-            ))}
+            </div>
+        </div>
+    </div>
+))}
         </div>
     );
 }
