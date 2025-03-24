@@ -9,7 +9,7 @@ export default function AddTicketPage() {
     const [mensagem, setMensagem] = useState('');
 
     useEffect(() => {
-        axios.get(https://controle-passagens.onrender.com/buses').then(res => setBuses(res.data));
+        axios.get('https://controle-passagens.onrender.com/buses').then(res => setBuses(res.data));
     }, []);
 
     const adicionarPassagem = async () => {
