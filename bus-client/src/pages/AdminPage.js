@@ -96,7 +96,7 @@ export default function AdminPage() {
                 <label className="label">Vagas para Adolescentes</label>
                 <input name="teen" type="number" placeholder="Vagas para Adolescentes" className="form-control mb-2" value={newBus.teen} onChange={handleChange} />
                 <label className="label">Vagas Comuns</label>
-                <input name="common" type="number" placeholder="Vagas Comuns" className="form-control mb-2" value={newBus.common} onChange={handleChange} />
+                <input name="common" type="number" placeholder="Vagas Comuns" className="form-control mb-2" value={newBus.totalSeats - newBus.elderly - newBus.teen} onChange={handleChange} />
 
                 <button onClick={addOrUpdateBus} className="btn btn-primary">
                     {editingBusId ? 'Salvar Alterações' : 'Adicionar Ônibus'}
