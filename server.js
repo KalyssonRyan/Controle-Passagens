@@ -1,10 +1,12 @@
 // Backend - Node.js + Express + Socket.IO + MongoDB
+require('dotenv').config();
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const { v4: uuidv4 } = require('uuid');
+
 const authMiddleware = (req, res, next) => {
     const authHeader = req.headers.authorization;
     if (!authHeader) return res.status(401).json({ message: 'Token não enviado' });
@@ -26,7 +28,7 @@ const io = new Server(server, { cors: { origin: '*' } });
 app.use(cors());
 app.use(express.json());
 
-mongoose.connect('mongodb+srv://Kalysson:teste123@database1.osyp7.mongodb.net/?retryWrites=true&w=majority&appName=Database1', {
+mongoose.connect('process.env.MONGO_URI', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 });
