@@ -1,6 +1,7 @@
 // src/pages/AdminPage.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { Modal, Button } from 'react-bootstrap';
 
 export default function AdminPage() {
     const [buses, setBuses] = useState([]);
@@ -12,9 +13,12 @@ export default function AdminPage() {
         common: 25
     });
     const [editingBusId, setEditingBusId] = useState(null);
+    const [showModal, setShowModal] = useState(false);
+    const [busToDelete, setBusToDelete] = useState(null);
 
     const fetchBuses = () => {
-        axios.get('https://controle-passagens.onrender.com/buses').then(res => setBuses(res.data));
+        axios.get('https://controle-passagens.onrender.com/buses')
+            .then(res => setBuses(res.data));
     };
 
     useEffect(() => {
@@ -65,22 +69,34 @@ export default function AdminPage() {
         fetchBuses();
     };
 
+    const handleShowModal = (bus) => {
+        setBusToDelete(bus);
+        setShowModal(true);
+    };
+
+    const handleConfirmDelete = async () => {
+        if (busToDelete) {
+            await deleteBus(busToDelete._id);
+            setShowModal(false);
+        }
+    };
+
     return (
         <div>
             <h2>Painel do Administrador</h2>
 
             <div className="card p-3 mb-4">
                 <h5>{editingBusId ? 'Editar Ônibus' : 'Novo Ônibus'}</h5>
-                <label class="label">Nome</label>
+                <label className="label">Nome</label>
                 <input name="name" placeholder="Nome" className="form-control mb-2" value={newBus.name} onChange={handleChange} />
-                <label class="label">Total de Vagas</label>
+                <label className="label">Total de Vagas</label>
                 <input name="totalSeats" type="number" placeholder="Total de Vagas" className="form-control mb-2" value={newBus.totalSeats} onChange={handleChange} />
-                <label class="label">Vagas para idosos</label>
+                <label className="label">Vagas para Idosos</label>
                 <input name="elderly" type="number" placeholder="Vagas para Idosos" className="form-control mb-2" value={newBus.elderly} onChange={handleChange} />
-                <label class="label">Vagas para Adolescentes</label>
+                <label className="label">Vagas para Adolescentes</label>
                 <input name="teen" type="number" placeholder="Vagas para Adolescentes" className="form-control mb-2" value={newBus.teen} onChange={handleChange} />
-                <label class="label">Vagas Comuns</label>
-                <input name="common" type="number" placeholder="Vagas Comuns" className="form-control mb-2" value={newBus.common || newBus.totalSeats - newBus.elderly - newBus.teen} onChange={handleChange} />
+                <label className="label">Vagas Comuns</label>
+                <input name="common" type="number" placeholder="Vagas Comuns" className="form-control mb-2" value={newBus.common} onChange={handleChange} />
 
                 <button onClick={addOrUpdateBus} className="btn btn-primary">
                     {editingBusId ? 'Salvar Alterações' : 'Adicionar Ônibus'}
@@ -88,52 +104,34 @@ export default function AdminPage() {
             </div>
 
             <h4>Ônibus Cadastrados</h4>
-{buses.map(bus => (
-    <div key={bus._id} className="card mb-3 p-3">
-        <h5>{bus.name}</h5>
-        <p><strong>Total de Vagas:</strong> {bus.totalSeats}</p>
-        <p>Idosos: {bus.reserved.elderly}/{bus.limits.elderly}</p>
-        <p>Adolescentes: {bus.reserved.teen}/{bus.limits.teen}</p>
-        <p>Comum: {bus.reserved.common}/{bus.limits.common}</p>
+            {buses.map(bus => (
+                <div key={bus._id} className="card mb-3 p-3">
+                    <h5>{bus.name}</h5>
+                    <p><strong>Total de Vagas:</strong> {bus.totalSeats}</p>
+                    <p>Idosos: {bus.reserved.elderly}/{bus.limits.elderly}</p>
+                    <p>Adolescentes: {bus.reserved.teen}/{bus.limits.teen}</p>
+                    <p>Comum: {bus.reserved.common}/{bus.limits.common}</p>
 
-        <div className="mt-2">
-            <button onClick={() => startEditing(bus)} className="btn btn-warning btn-sm me-2">Editar</button>
-            <button
-                className="btn btn-danger btn-sm"
-                data-bs-toggle="modal"
-                data-bs-target={`#confirmDeleteModal-${bus._id}`}
-            >
-                Excluir
-            </button>
-        </div>
-
-        {/* Modal de confirmação */}
-        <div className="modal fade" id={`confirmDeleteModal-${bus._id}`} tabIndex="-1" aria-labelledby="modalLabel" aria-hidden="true">
-            <div className="modal-dialog modal-dialog-centered">
-                <div className="modal-content">
-                    <div className="modal-header">
-                        <h5 className="modal-title">Confirmar Exclusão</h5>
-                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-                    </div>
-                    <div className="modal-body">
-                        Tem certeza que deseja excluir o ônibus <strong>{bus.name}</strong>?
-                    </div>
-                    <div className="modal-footer">
-                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button
-                            type="button"
-                            className="btn btn-danger"
-                            data-bs-dismiss="modal"
-                            onClick={() => deleteBus(bus._id)}
-                        >
-                            Confirmar Exclusão
-                        </button>
+                    <div className="mt-2">
+                        <button onClick={() => startEditing(bus)} className="btn btn-warning btn-sm me-2">Editar</button>
+                        <button onClick={() => handleShowModal(bus)} className="btn btn-danger btn-sm">Excluir</button>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-))}
+            ))}
+
+            {/* Modal de confirmação (fora do map) */}
+            <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>Confirmar Exclusão</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    Tem certeza que deseja excluir o ônibus <strong>{busToDelete?.name}</strong>?
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowModal(false)}>Cancelar</Button>
+                    <Button variant="danger" onClick={handleConfirmDelete}>Confirmar Exclusão</Button>
+                </Modal.Footer>
+            </Modal>
         </div>
     );
 }
