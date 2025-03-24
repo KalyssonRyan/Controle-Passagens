@@ -9,7 +9,7 @@ export default function AddTicketPage() {
     const [mensagem, setMensagem] = useState('');
 
     useEffect(() => {
-        axios.get('http://localhost:5001/buses').then(res => setBuses(res.data));
+        axios.get(https://controle-passagens.onrender.com/buses').then(res => setBuses(res.data));
     }, []);
 
     const adicionarPassagem = async () => {
@@ -19,7 +19,7 @@ export default function AddTicketPage() {
         }
     
         try {
-            const response = await axios.post('http://localhost:5001/reserve', {
+            const response = await axios.post('https://controle-passagens.onrender.com/reserve', {
                 busId: selectedBusId,
                 type
             });

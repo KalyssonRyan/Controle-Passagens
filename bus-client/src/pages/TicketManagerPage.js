@@ -20,7 +20,7 @@ export default function TicketManagerPage() {
         if (!confirmar) return;
 
         try {
-            await axios.post('http://localhost:5001/cancel', { ticketId });
+            await axios.post('https://controle-passagens.onrender.com/cancel', { ticketId });
             carregarTickets(); // atualiza lista
         } catch (err) {
             alert('Erro ao cancelar ticket');
@@ -32,7 +32,7 @@ export default function TicketManagerPage() {
         if (!confirmar) return;
 
         try {
-            await axios.delete(`http://localhost:5001/confirm-ticket/${ticketId}`);
+            await axios.delete(`https://controle-passagens.onrender.com/confirm-ticket/${ticketId}`);
             carregarTickets(); // atualiza lista
         } catch (err) {
             alert('Erro ao confirmar ticket');

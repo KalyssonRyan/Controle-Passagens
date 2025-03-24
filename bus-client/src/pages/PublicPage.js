@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import io from 'socket.io-client';
 import axios from 'axios';
 
-const socket = io('http://localhost:5001');
+const socket = io('https://controle-passagens.onrender.com');
 
 export default function PublicPage() {
     const [buses, setBuses] = useState([]);
 
     useEffect(() => {
         // Carrega dados inicialmente
-        axios.get('http://localhost:5001/buses').then(res => setBuses(res.data));
+        axios.get('https://controle-passagens.onrender.com/buses').then(res => setBuses(res.data));
 
         // Atualiza automaticamente quando o servidor emitir
         socket.on('buses', (data) => {

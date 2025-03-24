@@ -10,7 +10,7 @@ export default function LoginPage() {
 
     const handleLogin = async () => {
         try {
-            const response = await axios.post('http://localhost:5001/login', { email, password });
+            const response = await axios.post('https://controle-passagens.onrender.com/login', { email, password });
             login(response.data.token);
             window.location.href = '/admin';
 

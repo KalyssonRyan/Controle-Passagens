@@ -14,7 +14,7 @@ export default function AdminPage() {
     const [editingBusId, setEditingBusId] = useState(null);
 
     const fetchBuses = () => {
-        axios.get('http://localhost:5001/buses').then(res => setBuses(res.data));
+        axios.get('https://controle-passagens.onrender.com/buses').then(res => setBuses(res.data));
     };
 
     useEffect(() => {
@@ -39,10 +39,10 @@ export default function AdminPage() {
         };
 
         if (editingBusId) {
-            await axios.put(`http://localhost:5001/edit-bus/${editingBusId}`, payload);
+            await axios.put(`https://controle-passagens.onrender.com/edit-bus/${editingBusId}`, payload);
             setEditingBusId(null);
         } else {
-            await axios.post('http://localhost:5001/add-bus', payload);
+            await axios.post('https://controle-passagens.onrender.com/add-bus', payload);
         }
 
         setNewBus({ name: '', totalSeats: 30, elderly: 2, teen: 3, common: 25 });
@@ -61,7 +61,7 @@ export default function AdminPage() {
     };
 
     const deleteBus = async (busId) => {
-        await axios.delete(`http://localhost:5001/delete-bus/${busId}`);
+        await axios.delete(`https://controle-passagens.onrender.com/delete-bus/${busId}`);
         fetchBuses();
     };
 
