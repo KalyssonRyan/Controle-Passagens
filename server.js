@@ -37,7 +37,8 @@ mongoose.connect(process.env.MONGO_URI, {
 const ticketSchema = new mongoose.Schema({
     busId: mongoose.Schema.Types.ObjectId,
     code: String,
-    type: String
+    type: String ,
+    compradoPor: String
 });
 
 const busSchema = new mongoose.Schema({
@@ -76,7 +77,7 @@ app.get('/tickets', async (req, res) => {
 
 // Rota para reservar assento
 app.post('/reserve', async (req, res) => {
-    const { busId, type } = req.body;
+    const { busId, type, name } = req.body;
     let bus = await Bus.findById(busId);
     if (!bus) return res.status(404).send('Ônibus não encontrado');
 
@@ -91,7 +92,7 @@ app.post('/reserve', async (req, res) => {
         bus.reserved[type]++;
         await bus.save();
 
-        const ticket = new Ticket({ busId, code: uuidv4(), type });
+        const ticket = new Ticket({ busId, code: uuidv4(), type, compradoPor: name });
         await ticket.save();
 
         io.emit('buses', await Bus.find());
