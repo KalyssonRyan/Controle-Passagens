@@ -48,6 +48,7 @@ export default function TicketManagerPage() {
                 <div key={ticket._id} className="card p-3 mb-2">
                     <p><strong>Código:</strong> {ticket.code}</p>
                     <p><strong>Tipo:</strong> {ticket.type}</p>
+                    <p><strong>Passageiro:</strong> {ticket.compradoPor}</p>
                     <div>
                         <button className="btn btn-danger btn-sm me-2" onClick={() => cancelarTicket(ticket._id)}>Cancelar</button>
                         <button className="btn btn-success btn-sm" onClick={() => confirmarTicket(ticket._id)}>Confirmar</button>

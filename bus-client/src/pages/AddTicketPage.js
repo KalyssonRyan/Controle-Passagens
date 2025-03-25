@@ -7,7 +7,7 @@ export default function AddTicketPage() {
     const [selectedBusId, setSelectedBusId] = useState('');
     const [type, setType] = useState('elderly');
     const [mensagem, setMensagem] = useState('');
-
+    const [name, setName] = useState('');
     useEffect(() => {
         axios.get('https://controle-passagens.onrender.com/buses').then(res => setBuses(res.data));
     }, []);
@@ -21,7 +21,8 @@ export default function AddTicketPage() {
         try {
             const response = await axios.post('https://controle-passagens.onrender.com/reserve', {
                 busId: selectedBusId,
-                type
+                type,
+                name
             });
             setMensagem(`Passagem registrada com sucesso! Código do ticket: ${response.data.ticket.code}`);
         } catch (err) {
@@ -57,6 +58,11 @@ export default function AddTicketPage() {
                     <option value="teen">Adolescente</option>
                     <option value="common">Comum</option>
                 </select>
+            </div>
+            <div className="mb-3">
+                <label className="form-label">Nome: </label>
+                <input name="name" placeholder="Nome" className="form-control mb-2" value={name} onChange={(e) => setName(e.target.value)}
+/>
             </div>
 
             <button className="btn btn-success" onClick={adicionarPassagem}>Registrar Passagem</button>
