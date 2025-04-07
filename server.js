@@ -148,7 +148,12 @@ const jwt = require('jsonwebtoken');
 // Modelo de usuário
 const userSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
-    password: { type: String, required: true }
+    password: { type: String }, // Pode ser vazio se usar login com Google depois
+    name: { type: String, required: true },
+    cpf: { type: String, required: true, unique: true },
+    documentNumber: { type: String, required: true },
+    isElderly: { type: Boolean, default: false },
+    createdAt: { type: Date, default: Date.now }
 });
 
 const User = mongoose.model('User', userSchema);
@@ -193,4 +198,16 @@ app.delete('/confirm-ticket/:id', async (req, res) => {
     await Ticket.findByIdAndDelete(ticketId); // apenas remove
     io.emit('tickets', await Ticket.find());
     res.json({ success: true });
+});
+app.post('/register-client', async (req, res) => {
+    const { email, password, name, cpf, documentNumber, isElderly } = req.body;
+
+    const userExists = await User.findOne({ $or: [ { email }, { cpf } ] });
+    if (userExists) return res.status(400).json({ message: 'Email ou CPF já cadastrado' });
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new User({ email, password: hashedPassword, name, cpf, documentNumber, isElderly });
+    await newUser.save();
+
+    res.json({ message: 'Cliente registrado com sucesso' });
 });

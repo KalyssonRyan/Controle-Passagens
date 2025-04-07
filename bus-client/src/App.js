@@ -6,7 +6,7 @@ import LoginPage from './pages/LoginPage';
 import PrivateRoute from './PrivateRoute';
 import { isAuthenticated, logout } from './auth';
 import TicketManagerPage from './pages/TicketManagerPage';
-
+import RegisterPage from './pages/RegisterPage';
 function App() {
     return (
         <Router>
@@ -19,7 +19,7 @@ function App() {
                                 <Link className="btn btn-outline-success me-2" to="/admin">Admin</Link>
                                 <Link className="btn btn-outline-warning me-2" to="/add-ticket">Passagens</Link>
                                 <Link className="btn btn-outline-info me-2" to="/gerenciar-tickets">Gerenciar Tickets</Link>
-
+                                <Link className="btn btn-outline-info me-2" to="/register">Registrar</Link>
                             </>
                         )}
                     </div>
@@ -39,6 +39,7 @@ function App() {
                     <Route path="/admin" element={<PrivateRoute><AdminPage /></PrivateRoute>} />
                     <Route path="/add-ticket" element={<PrivateRoute><AddTicketPage /></PrivateRoute>} />
                     <Route path="/gerenciar-tickets" element={<PrivateRoute><TicketManagerPage /></PrivateRoute>} />
+                    <Route path="/register" element={<PrivateRoute><RegisterPage/></PrivateRoute>} />
 
                 </Routes>
             </div>
