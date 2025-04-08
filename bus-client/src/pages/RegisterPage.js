@@ -27,8 +27,30 @@ export default function RegisterPage() {
             setMensagem('As senhas não coincidem!');
             return;
         }
+    
+        const formData = new FormData();
+        formData.append('name', form.name);
+        formData.append('email', form.email);
+        formData.append('password', form.password);
+        formData.append('cpf', form.cpf);
+        formData.append('documentNumber', form.documentNumber);
+        formData.append('isElderly', form.isElderly);
+        formData.append('isFreePass', form.isFreePass);
+        
+        if (form.documentImage) {
+            formData.append('documentImage', form.documentImage); // só se tiver imagem
+        }
+    
         try {
-            const res = await axios.post('https://controle-passagens.onrender.com/register-client', form);
+            const res = await axios.post(
+                'https://controle-passagens.onrender.com/register-client',
+                formData,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                }
+            );
             setMensagem(res.data.message);
         } catch (err) {
             setMensagem(err.response?.data?.message || 'Erro ao registrar');
