@@ -180,6 +180,7 @@ const userSchema = new mongoose.Schema({
     isElderly: { type: Boolean, default: false },
     isFreePass: {type: Boolean,default:false},
     documentImage: { type: String },
+    documentImageId: { type: String },
     createdAt: { type: Date, default: Date.now }
 });
 
@@ -249,4 +250,31 @@ app.post('/register-client', upload.single('documentImage'), async (req, res) =>
         console.error(err);
         res.status(500).json({ message: 'Erro ao cadastrar cliente' });
     }
+});
+
+// rota para editar dados
+app.get('/me', authMiddleware, async (req, res) => {
+    const user = await User.findById(req.userId).select('-password');
+    res.json(user);
+});
+app.put('/me', authMiddleware, upload.single('documentImage'), async (req, res) => {
+    const { name, cpf, documentNumber, isElderly, isFreePass } = req.body;
+    const user = await User.findById(req.userId);
+    const updateData = { name, cpf, documentNumber, isElderly, isFreePass };
+
+    if (req.file) {
+        const documentImage = req.file.path;
+        const documentImageId = req.file.filename; // filename é o public_id
+
+        // Se já havia imagem, deletar do Cloudinary
+        if (user.documentImageId) {
+            await cloudinary.uploader.destroy(user.documentImageId);
+        }
+
+        updateData.documentImage = documentImage;
+        updateData.documentImageId = documentImageId;
+    }
+
+    await User.findByIdAndUpdate(req.userId, updateData);
+    res.json({ message: 'Dados atualizados com sucesso' });
 });
