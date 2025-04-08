@@ -1,24 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import io from 'socket.io-client';
 import axios from 'axios';
+import Loader from '../components/Loader';
 
 const socket = io('https://controle-passagens.onrender.com');
 
 export default function PublicPage() {
     const [buses, setBuses] = useState([]);
-
+     const [carregando, setCarregando] = useState(true);
     useEffect(() => {
         // Carrega dados inicialmente
+        setCarregando(true)
         axios.get('https://controle-passagens.onrender.com/buses').then(res => setBuses(res.data));
 
         // Atualiza automaticamente quando o servidor emitir
         socket.on('buses', (data) => {
             setBuses(data);
+            setCarregando(false);
         });
 
         return () => socket.off('buses');
+       
     }, []);
-
+    if(carregando) return <Loader texto="Buscando Ônibus"/>;
     return (
         <div>
             <h2>Consulta Pública</h2>
