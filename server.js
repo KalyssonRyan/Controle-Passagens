@@ -13,8 +13,7 @@ const session = require('express-session');
 const cloudinary = require('cloudinary').v2;
 const multer = require('multer');
 //Adicionando Cloudinary
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
-const jwt = require('jsonwebtoken'); 
+const { CloudinaryStorage } = require('multer-storage-cloudinary'); 
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
