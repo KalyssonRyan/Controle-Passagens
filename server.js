@@ -14,7 +14,8 @@ const cloudinary = require('cloudinary').v2;
 const multer = require('multer');
 //Adicionando Cloudinary
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
-
+const jwt = require('jsonwebtoken'); 
+const jwt = require('jsonwebtoken');
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -254,7 +255,15 @@ app.post('/register-client', upload.single('documentImage'), async (req, res) =>
 
 // rota para editar dados
 app.get('/me', authMiddleware, async (req, res) => {
+    console.log('[ME] Requisição autenticada de ID:', req.userId);
+
     const user = await User.findById(req.userId).select('-password');
+    if (!user) {
+        console.log('[ME] Usuário não encontrado');
+        return res.status(404).json({ message: 'Usuário não encontrado' });
+    }
+
+    console.log('[ME] Dados enviados:', user);
     res.json(user);
 });
 app.put('/me', authMiddleware, upload.single('documentImage'), async (req, res) => {
