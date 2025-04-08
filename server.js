@@ -14,7 +14,8 @@ const cloudinary = require('cloudinary').v2;
 const multer = require('multer');
 //Adicionando Cloudinary
 const { CloudinaryStorage } = require('multer-storage-cloudinary'); 
-
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -167,8 +168,7 @@ app.delete('/delete-bus/:id', async (req, res) => {
     io.emit('tickets', await Ticket.find());
     res.json({ success: true });
 });
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+
 
 // Modelo de usuário
 const userSchema = new mongoose.Schema({
@@ -229,7 +229,7 @@ app.delete('/confirm-ticket/:id', async (req, res) => {
 });
 app.post('/register-client', upload.single('documentImage'), async (req, res) => {
     const { email, password, name, cpf, documentNumber, isElderly } = req.body;
-    const documentImage = req.file ? req.file.path : null; // agora é uma URL do Cloudinary
+    const documentImage = req.file ? req.file.path : null;
 
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -245,7 +245,12 @@ app.post('/register-client', upload.single('documentImage'), async (req, res) =>
         });
 
         await newUser.save();
-        res.json({ message: 'Cliente cadastrado com sucesso!' });
+
+        // 👇 Gera token automaticamente após o registro
+        const token = jwt.sign({ id: newUser._id }, 'segredo123', { expiresIn: '2h' });
+
+        res.json({ message: 'Cliente cadastrado com sucesso!', token }); // 👈 Envia token também
+
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Erro ao cadastrar cliente' });
