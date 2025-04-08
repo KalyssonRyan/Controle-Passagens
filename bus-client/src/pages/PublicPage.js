@@ -11,12 +11,11 @@ export default function PublicPage() {
     useEffect(() => {
         // Carrega dados inicialmente
         setCarregando(true)
-        axios.get('https://controle-passagens.onrender.com/buses').then(res => setBuses(res.data));
+        axios.get('https://controle-passagens.onrender.com/buses').then(res => {setBuses(res.data);setCarregando(false);});
 
         // Atualiza automaticamente quando o servidor emitir
         socket.on('buses', (data) => {
-            setBuses(data);
-            setCarregando(false);
+            setBuses(data); 
         });
 
         return () => socket.off('buses');
