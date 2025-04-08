@@ -47,7 +47,7 @@ function App() {
                     <Route path="/add-ticket" element={<PrivateRoute><AddTicketPage /></PrivateRoute>} />
                     <Route path="/gerenciar-tickets" element={<PrivateRoute><TicketManagerPage /></PrivateRoute>} />
                     <Route path="/register" element={<RegisterPage/>} />
-                    <Route path="/minha-conta" element={<ProtectedRoute><MinhaContaPage /></ProtectedRoute>} />
+                    <Route path="/minha-conta" element={<PrivateRoute><MinhaContaPage /></PrivateRoute>} />
 
                 </Routes>
             </div>
