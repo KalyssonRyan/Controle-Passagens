@@ -6,7 +6,9 @@ const { Server } = require('socket.io');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const { v4: uuidv4 } = require('uuid');
-
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const session = require('express-session');
 const authMiddleware = (req, res, next) => {
     const authHeader = req.headers.authorization;
     if (!authHeader) return res.status(401).json({ message: 'Token não enviado' });
@@ -153,6 +155,7 @@ const userSchema = new mongoose.Schema({
     cpf: { type: String, required: true, unique: true },
     documentNumber: { type: String, required: true },
     isElderly: { type: Boolean, default: false },
+    isFreePass: {type: Boolean,default:false},
     createdAt: { type: Date, default: Date.now }
 });
 
