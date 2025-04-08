@@ -1,7 +1,7 @@
 // src/pages/RegisterPage.js
 import React, { useState } from 'react';
 import axios from 'axios';
-
+import { login } from '../auth';
 export default function RegisterPage() {
     const [form, setForm] = useState({
         name: '',

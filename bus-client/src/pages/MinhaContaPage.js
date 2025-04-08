@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { getToken } from '../auth'; // ou onde você guarda o token
-import { login } from '../auth';
+
 export default function MinhaContaPage() {
     const [form, setForm] = useState({
         name: '',
