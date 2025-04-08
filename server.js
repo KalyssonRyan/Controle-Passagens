@@ -181,6 +181,7 @@ const userSchema = new mongoose.Schema({
     isFreePass: {type: Boolean,default:false},
     documentImage: { type: String },
     documentImageId: { type: String },
+    isAdmin: { type: Boolean, default: false },
     createdAt: { type: Date, default: Date.now }
 });
 
@@ -203,7 +204,7 @@ app.post('/login', async (req, res) => {
     const isValid = await bcrypt.compare(password, user.password);
     if (!isValid) return res.status(401).json({ message: 'Senha incorreta' });
 
-    const token = jwt.sign({ id: user._id }, 'segredo123', { expiresIn: '2h' });
+    const token = jwt.sign({ id: user._id, isAdmin: user.isAdmin }, 'segredo123', { expiresIn: '2h' });
     res.json({ token });
 });
 // Servidor rodando na porta 5001
