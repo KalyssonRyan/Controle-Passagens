@@ -1,5 +1,6 @@
 // Backend - Node.js + Express + Socket.IO + MongoDB
 require('dotenv').config();
+
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
@@ -10,7 +11,7 @@ const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const session = require('express-session');
 const cloudinary = require('cloudinary').v2;
-
+const multer = require('multer');
 //Adicionando Cloudinary
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
