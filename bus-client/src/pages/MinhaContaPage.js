@@ -15,32 +15,34 @@ export default function MinhaContaPage() {
     const [preview, setPreview] = useState(null);
     const [mensagem, setMensagem] = useState('');
 
-    const carregarUsuario = async () => {
-        try {
-            const res = await axios.get('https://controle-passagens.onrender.com/me', {
-                headers: { Authorization: `Bearer ${getToken()}` }
-            });
-
-            const dados = res.data;
-
-            setForm({
-                name: dados.name || '',
-                cpf: dados.cpf || '',
-                documentNumber: dados.documentNumber || '',
-                isElderly: dados.isElderly || false,
-                isFreePass: dados.isFreePass || false,
-                documentImage: dados.documentImage || '',
-                newImageFile: null
-            });
-
-            setPreview(null); // não mostra preview se ainda não alterou imagem
-
-        } catch (err) {
-            console.error('Erro ao carregar dados do usuário:', err);
-        }
-    };
-
-    carregarUsuario();
+    useEffect(() => {
+        const carregarUsuario = async () => {
+            try {
+                const res = await axios.get('https://controle-passagens.onrender.com/me', {
+                    headers: { Authorization: `Bearer ${getToken()}` }
+                });
+    
+                const dados = res.data;
+    
+                setForm({
+                    name: dados.name || '',
+                    cpf: dados.cpf || '',
+                    documentNumber: dados.documentNumber || '',
+                    isElderly: dados.isElderly || false,
+                    isFreePass: dados.isFreePass || false,
+                    documentImage: dados.documentImage || '',
+                    newImageFile: null
+                });
+    
+                setPreview(null); // não mostra preview se ainda não alterou imagem
+    
+            } catch (err) {
+                console.error('Erro ao carregar dados do usuário:', err);
+            }
+        };
+    
+        carregarUsuario();
+    }, []);
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
