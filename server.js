@@ -9,6 +9,28 @@ const { v4: uuidv4 } = require('uuid');
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const session = require('express-session');
+const cloudinary = require('cloudinary').v2;
+
+//Adicionando Cloudinary
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: 'documentos',
+    allowed_formats: ['jpg', 'png', 'jpeg'],
+    public_id: (req, file) => Date.now() + '-' + file.originalname
+  }
+});
+
+const upload = multer({ storage });
+
 const authMiddleware = (req, res, next) => {
     const authHeader = req.headers.authorization;
     if (!authHeader) return res.status(401).json({ message: 'Token não enviado' });
@@ -156,6 +178,7 @@ const userSchema = new mongoose.Schema({
     documentNumber: { type: String, required: true },
     isElderly: { type: Boolean, default: false },
     isFreePass: {type: Boolean,default:false},
+    documentImage: { type: String },
     createdAt: { type: Date, default: Date.now }
 });
 
@@ -202,15 +225,27 @@ app.delete('/confirm-ticket/:id', async (req, res) => {
     io.emit('tickets', await Ticket.find());
     res.json({ success: true });
 });
-app.post('/register-client', async (req, res) => {
+app.post('/register-client', upload.single('documentImage'), async (req, res) => {
     const { email, password, name, cpf, documentNumber, isElderly } = req.body;
+    const documentImage = req.file ? req.file.path : null; // agora é uma URL do Cloudinary
 
-    const userExists = await User.findOne({ $or: [ { email }, { cpf } ] });
-    if (userExists) return res.status(400).json({ message: 'Email ou CPF já cadastrado' });
+    try {
+        const hashedPassword = await bcrypt.hash(password, 10);
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({ email, password: hashedPassword, name, cpf, documentNumber, isElderly });
-    await newUser.save();
+        const newUser = new User({
+            email,
+            password: hashedPassword,
+            name,
+            cpf,
+            documentNumber,
+            isElderly,
+            documentImage
+        });
 
-    res.json({ message: 'Cliente registrado com sucesso' });
+        await newUser.save();
+        res.json({ message: 'Cliente cadastrado com sucesso!' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Erro ao cadastrar cliente' });
+    }
 });

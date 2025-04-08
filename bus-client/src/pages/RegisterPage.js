@@ -12,6 +12,7 @@ export default function RegisterPage() {
         documentNumber: '',
         isElderly: false,
         isFreePass: false,
+        documentImage: null 
     });
 
     const [mensagem, setMensagem] = useState('');
@@ -56,6 +57,18 @@ export default function RegisterPage() {
                 <input className="form-check-input" type="checkbox" name="isFreePass" onChange={handleChange} />
                 <label className="form-check-label">Sou passe livre</label>
             </div>
+            <label className="label">Anexar imagem da carteirinha (opcional)</label>
+<input
+    type="file"
+    name="documentImage"
+    className="form-control mb-3"
+    accept="image/*"
+    onChange={(e) =>
+        setForm((prev) => ({
+            ...prev,
+            documentImage: e.target.files[0], // pega o arquivo da imagem
+})) }
+/>
             <label name="documentNumber" className="label">Número da Carteirinha</label>
             <input name="documentNumber" placeholder="Digite o Nº do Documento" className="form-control mb-2" onChange={handleChange} />
             
