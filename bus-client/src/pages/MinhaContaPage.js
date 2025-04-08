@@ -14,10 +14,11 @@ export default function MinhaContaPage() {
     });
     const [preview, setPreview] = useState(null);
     const [mensagem, setMensagem] = useState('');
-
+    const [carregando, setCarregando] = useState(true);
     useEffect(() => {
         const carregarUsuario = async () => {
             try {
+                setCarregando(true);
                 const res = await axios.get('https://controle-passagens.onrender.com/me', {
                     headers: { Authorization: `Bearer ${getToken()}` }
                 });
@@ -38,6 +39,8 @@ export default function MinhaContaPage() {
     
             } catch (err) {
                 console.error('Erro ao carregar dados do usuário:', err);
+            }finally{
+                setCarregando(false);
             }
         };
     
@@ -73,7 +76,16 @@ export default function MinhaContaPage() {
             setMensagem('Erro ao atualizar dados');
         }
     };
-
+    if (carregando) {
+        return (
+            <div className="container text-center mt-5">
+                <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Carregando...</span>
+                </div>
+                <p className="mt-3">Carregando dados da conta...</p>
+            </div>
+        );
+    }
     return (
         <div className="container mt-4">
             <h2>Minha Conta</h2>
@@ -122,10 +134,10 @@ export default function MinhaContaPage() {
         } else {
             setPreview(null);
         }
-    }}
-/>
+    }}/>
             <button className="btn btn-primary" onClick={handleSubmit}>Salvar Alterações</button>
             {mensagem && <div className="alert alert-info mt-3">{mensagem}</div>}
         </div>
     );
+    
 }
