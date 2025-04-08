@@ -51,7 +51,15 @@ export default function RegisterPage() {
                     },
                 }
             );
+            if (res.data.token) {
+                login(res.data.token);
+            }
+        
             setMensagem(res.data.message);
+            
+            // Redirecionar direto pra página de conta
+            window.location.href = '/minha-conta';
+        
         } catch (err) {
             setMensagem(err.response?.data?.message || 'Erro ao registrar');
         }
