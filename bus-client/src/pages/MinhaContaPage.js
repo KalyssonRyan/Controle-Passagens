@@ -15,13 +15,32 @@ export default function MinhaContaPage() {
     const [preview, setPreview] = useState(null);
     const [mensagem, setMensagem] = useState('');
 
-    useEffect(() => {
-        axios.get('https://controle-passagens.onrender.com/me', {
-            headers: { Authorization: `Bearer ${getToken()}` }
-        }).then(res => {
-            setForm(res.data);
-        });
-    }, []);
+    const carregarUsuario = async () => {
+        try {
+            const res = await axios.get('https://controle-passagens.onrender.com/me', {
+                headers: { Authorization: `Bearer ${getToken()}` }
+            });
+
+            const dados = res.data;
+
+            setForm({
+                name: dados.name || '',
+                cpf: dados.cpf || '',
+                documentNumber: dados.documentNumber || '',
+                isElderly: dados.isElderly || false,
+                isFreePass: dados.isFreePass || false,
+                documentImage: dados.documentImage || '',
+                newImageFile: null
+            });
+
+            setPreview(null); // não mostra preview se ainda não alterou imagem
+
+        } catch (err) {
+            console.error('Erro ao carregar dados do usuário:', err);
+        }
+    };
+
+    carregarUsuario();
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -74,6 +93,12 @@ export default function MinhaContaPage() {
     <div className="mb-3">
         <p>Pré-visualização da nova imagem:</p>
         <img src={preview} alt="Preview" width="200" />
+    </div>
+)}
+{form.documentImage && !preview && (
+    <div className="mb-3">
+        <p>Imagem atual:</p>
+        <img src={form.documentImage} alt="Imagem atual" width="200" />
     </div>
 )}
 <label>Trocar imagem da carteirinha:</label>
