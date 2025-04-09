@@ -16,6 +16,7 @@ const multer = require('multer');
 const { CloudinaryStorage } = require('multer-storage-cloudinary'); 
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const Reserva = require('./models/Reserva');
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -175,7 +176,7 @@ const userSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     password: { type: String }, // Pode ser vazio se usar login com Google depois
     name: { type: String, required: true },
-    cpf: { type: String, required: true, unique: true },
+    cpf: { type: String, required: true, unique: true  },
     documentNumber: { type: String, required: true },
     isElderly: { type: Boolean, default: false },
     isFreePass: {type: Boolean,default:false},
@@ -209,18 +210,6 @@ app.post('/login', async (req, res) => {
 });
 // Servidor rodando na porta 5001
 server.listen(5001, () => console.log('Servidor rodando na porta 5001'));
-app.get('/criar-admin', async (req, res) => {
-    const email = 'admin@email.com';
-    const senha = 'admin123';
-
-    const userExists = await User.findOne({ email });
-    if (userExists) return res.send('Usuário já existe');
-
-    const hashed = await bcrypt.hash(senha, 10);
-    await User.create({ email, password: hashed });
-
-    res.send('Usuário admin criado: admin@email.com / admin123');
-});
 
 app.delete('/confirm-ticket/:id', async (req, res) => {
     const ticketId = req.params.id;
@@ -292,3 +281,97 @@ app.put('/me', authMiddleware, upload.single('documentImage'), async (req, res) 
     await User.findByIdAndUpdate(req.userId, updateData);
     res.json({ message: 'Dados atualizados com sucesso' });
 });
+
+app.post('/reservar', authMiddleware, async (req, res) => {
+    const { busId, date, time, type } = req.body;
+  
+    if (!busId || !date || !time || !type) {
+      return res.status(400).json({ message: 'Dados incompletos para reserva' });
+    }
+  
+    try {
+      const reserva = new Reserva({
+        userId: req.userId,
+        busId,
+        date,
+        time,
+        type,
+        status: 'pendente'
+      });
+  
+      await reserva.save();
+      res.json({ success: true, message: 'Reserva solicitada com sucesso! Aguarde confirmação.' });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Erro ao criar reserva' });
+    }
+  });
+
+  app.get('/reservas-confirmadas', async (req, res) => {
+    const { busId, date, time } = req.query;
+  
+    if (!busId || !date || !time) {
+      return res.status(400).json({ message: 'Parâmetros obrigatórios não informados' });
+    }
+  
+    try {
+      const reservas = await Reserva.find({
+        busId,
+        date,
+        time,
+        status: 'confirmada'
+      });
+  
+      // Conta por tipo
+      const contagem = {
+        common: 0,
+        elderly: 0,
+        freepass: 0
+      };
+  
+      reservas.forEach((reserva) => {
+        contagem[reserva.type]++;
+      });
+  
+      res.json(contagem);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Erro ao buscar reservas confirmadas' });
+    }
+  });
+
+  app.put('/confirmar-reserva/:id', authMiddleware, async (req, res) => {
+    try {
+      const reserva = await Reserva.findById(req.params.id);
+      if (!reserva) return res.status(404).json({ message: 'Reserva não encontrada' });
+  
+      const bus = await Bus.findById(reserva.busId);
+      if (!bus) return res.status(404).json({ message: 'Ônibus não encontrado' });
+  
+      // Contar quantas reservas já foram confirmadas
+      const jaConfirmadas = await Reserva.countDocuments({
+        busId: reserva.busId,
+        date: reserva.date,
+        time: reserva.time,
+        type: reserva.type,
+        status: 'confirmada'
+      });
+  
+      // Pegando o limite máximo para o tipo
+      const limiteMax = bus.limits[reserva.type];
+  
+      if (jaConfirmadas >= limiteMax) {
+        return res.status(400).json({ message: `Limite atingido para o tipo ${reserva.type}` });
+      }
+  
+      // Confirmar a reserva
+      reserva.status = 'confirmada';
+      await reserva.save();
+  
+      res.json({ success: true, message: 'Reserva confirmada com sucesso!' });
+  
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Erro ao confirmar reserva' });
+    }
+  });
