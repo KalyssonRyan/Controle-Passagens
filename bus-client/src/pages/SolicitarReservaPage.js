@@ -12,11 +12,24 @@ export default function SolicitarReservaPage() {
     });
     const [mensagem, setMensagem] = useState('');
 const [carregando, setCarregando] = useState(true);
+const [minhasReservas, setMinhasReservas] = useState([]);
     useEffect(() => {
         setCarregando(true);
         axios.get('https://controle-passagens.onrender.com/buses')
             .then(res => {setBuses(res.data);setCarregando(false)});
+            buscarMinhasReservas();
     }, []);
+
+    const buscarMinhasReservas = async () => {
+        try {
+            const res = await axios.get('https://controle-passagens.onrender.com/minhas-reservas', {
+                headers: { Authorization: `Bearer ${getToken()}` }
+            });
+            setMinhasReservas(res.data);
+        } catch (err) {
+            console.error('Erro ao buscar reservas', err);
+        }
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -59,6 +72,24 @@ const [carregando, setCarregando] = useState(true);
             </select>
 
             <button onClick={handleSubmit} className="btn btn-primary">Enviar Solicitação</button>
+
+
+            <h3>Minhas Reservas</h3>
+            {minhasReservas.length === 0 ? (
+                <p>Você ainda não fez nenhuma reserva.</p>
+            ) : (
+                minhasReservas.map(r => (
+                    <div key={r._id} className="card p-3 mb-2">
+                        <p><strong>Ônibus:</strong> {r.busId?.name}</p>
+                        <p><strong>Data:</strong> {r.date}</p>
+                        <p><strong>Horário:</strong> {r.time}</p>
+                        <p><strong>Tipo:</strong> {r.type}</p>
+                        <p><strong>Status:</strong> <span className={`badge bg-${r.status === 'confirmada' ? 'success' : 'warning'}`}>{r.status}</span></p>
+                    </div>
+                ))
+            )}
         </div>
+
+        
     );
 }
