@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { getToken } from '../auth';
 import Loader from '../components/Loader';
+import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css';
+
 export default function SolicitarReservaPage() {
     const [buses, setBuses] = useState([]);
     const [form, setForm] = useState({
@@ -58,8 +61,25 @@ const [minhasReservas, setMinhasReservas] = useState([]);
                 {buses.map(b => <option key={b._id} value={b._id}>{b.name}</option>)}
             </select>
 
-            <label>Data</label>
-            <input type="date" className="form-control mb-2" name="date" value={form.date} onChange={handleChange} />
+            <div className="mb-3">
+    <label>Escolha a Data no Calendário:</label>
+    <Calendar
+        onChange={(date) => setForm(prev => ({
+            ...prev,
+            date: new Date(date).toISOString().split('T')[0]
+        }))}
+        tileClassName={({ date, view }) => {
+            if (view === 'month') {
+                const diasReservados = minhasReservas.map(r => r.date);
+                const hoje = date.toISOString().split('T')[0];
+                if (diasReservados.includes(hoje)) {
+                    return 'bg-warning text-white'; // visual destaca o dia
+                }
+            }
+        }}
+    />
+    <small className="text-muted">Data selecionada: <strong>{form.date || 'Nenhuma'}</strong></small>
+</div>
 
             <label>Horário</label>
             <input type="time" className="form-control mb-2" name="time" value={form.time} onChange={handleChange} />
