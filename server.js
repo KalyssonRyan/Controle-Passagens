@@ -380,3 +380,13 @@ app.post('/reservar', authMiddleware, async (req, res) => {
     const pendentes = await Reserva.find({ status: 'pendente' }).populate('userId', 'name');
     res.json(pendentes);
 });
+
+app.get('/minhas-reservas', authMiddleware, async (req, res) => {
+    try {
+      const reservas = await Reserva.find({ userId: req.userId }).populate('busId', 'name');
+      res.json(reservas);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Erro ao buscar suas reservas' });
+    }
+  });
