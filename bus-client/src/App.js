@@ -9,6 +9,8 @@ import { isAuthenticated, logout, isAdmin } from './auth';
 import TicketManagerPage from './pages/TicketManagerPage';
 import RegisterPage from './pages/RegisterPage';
 import MinhaContaPage from './pages/MinhaContaPage';
+import ReservasPendentesPage from './pages/ReservasPendentesPage';
+import SolicitarReservaPage from './pages/SolicitarReservaPage';
 function App() {
     return (
         <Router>
@@ -23,12 +25,14 @@ function App() {
                                 <Link className="btn btn-outline-warning me-2" to="/add-ticket">Passagens</Link>
                                 <Link className="btn btn-outline-info me-2" to="/gerenciar-tickets">Gerenciar Tickets</Link>
                                 <Link className="btn btn-outline-info me-2" to="/minha-conta">Minha Conta</Link>
+                                <Link className="btn btn-outline-info me-2" to="/pendentes">Reservas Pendentes</Link>
 
                             </>
                         )}
                         {isAuthenticated() && !isAdmin() && (
                             <>
                                 <Link className="btn btn-outline-info me-2" to="/minha-conta">Minha Conta</Link>
+                                <Link className="btn btn-outline-info me-2" to="/solicitar-reserva">Solicitar Reservas</Link>
 
                             </>
                         )}
@@ -65,6 +69,9 @@ function App() {
                     <Route path="/gerenciar-tickets" element={
                         <AdminRoute><TicketManagerPage /></AdminRoute>
                     } />
+                    <Route path="/solicitar-reserva" element={<PrivateRoute><SolicitarReservaPage /></PrivateRoute>} />
+<Route path="/pendentes" element={<AdminRoute><ReservasPendentesPage /></AdminRoute>} />
+
                 </Routes>
             </div>
         </Router>
