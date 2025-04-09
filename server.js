@@ -375,3 +375,8 @@ app.post('/reservar', authMiddleware, async (req, res) => {
       res.status(500).json({ message: 'Erro ao confirmar reserva' });
     }
   });
+
+  app.get('/reservas-pendentes', authMiddleware, async (req, res) => {
+    const pendentes = await Reserva.find({ status: 'pendente' }).populate('userId', 'name');
+    res.json(pendentes);
+});
