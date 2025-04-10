@@ -342,7 +342,7 @@ app.post('/reservar', authMiddleware, async (req, res) => {
 
   app.put('/confirmar-reserva/:id', async (req, res) => {
     const reserva = await Reserva.findById(req.params.id).populate('busId userId');
-    const { nome } = req.query;
+    
     if (!reserva) return res.status(404).json({ message: 'Reserva não encontrada' });
   
     // Verifica limite por tipo
@@ -380,7 +380,7 @@ app.post('/reservar', authMiddleware, async (req, res) => {
       type: tipo,
       date: data,
       time: hora,
-      compradoPor: nome
+      compradoPor: reserva.userId.name
     });
   
     return res.json({
