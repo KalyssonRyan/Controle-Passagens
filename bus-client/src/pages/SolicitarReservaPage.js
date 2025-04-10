@@ -11,7 +11,7 @@ export default function SolicitarReservaPage() {
         busId: '',
         date: '',
         time: '',
-        type: 'common'
+        type: 'comum'
     });
     const [mensagem, setMensagem] = useState('');
 const [carregando, setCarregando] = useState(true);
