@@ -61,12 +61,12 @@ mongoose.connect(process.env.MONGO_URI, {
   });
 
 // Schemas do MongoDB
-const ticketSchema = new mongoose.Schema({
-    busId: mongoose.Schema.Types.ObjectId,
-    code: String,
-    type: String ,
-    compradoPor: String
-});
+// const ticketSchema = new mongoose.Schema({
+//     busId: mongoose.Schema.Types.ObjectId,
+//     code: String,
+//     type: String ,
+//     compradoPor: String
+// });
 
 const busSchema = new mongoose.Schema({
     name: String,
