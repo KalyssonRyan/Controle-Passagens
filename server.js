@@ -324,9 +324,9 @@ app.post('/reservar', authMiddleware, async (req, res) => {
   
       // Conta por tipo
       const contagem = {
-        common: 0,
-        elderly: 0,
-        freepass: 0
+        comum: 0,
+        idoso: 0,
+        passeLivre: 0
       };
   
       reservas.forEach((reserva) => {
