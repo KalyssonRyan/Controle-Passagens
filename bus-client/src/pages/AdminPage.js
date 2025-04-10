@@ -8,9 +8,9 @@ export default function AdminPage() {
     const [newBus, setNewBus] = useState({
         name: '',
         totalSeats: 30,
-        elderly: 2,
-        teen: 3,
-        common: 25
+        idoso: 2,
+        passeLivre: 3,
+        comum: 25
     });
     const [editingBusId, setEditingBusId] = useState(null);
     const [showModal, setShowModal] = useState(false);
@@ -34,11 +34,11 @@ export default function AdminPage() {
         const payload = {
             name: newBus.name,
             totalSeats: Number(newBus.totalSeats),
-            reserved: { elderly: 0, teen: 0, common: 0 },
+            reserved: { idoso: 0, passeLivre: 0, comum: 0 },
             limits: {
-                elderly: Number(newBus.elderly),
-                teen: Number(newBus.teen),
-                common: Number(newBus.common),
+                idoso: Number(newBus.idoso),
+                passeLivre: Number(newBus.passeLivre),
+                comum: Number(newBus.comum),
             },
         };
 
@@ -49,7 +49,7 @@ export default function AdminPage() {
             await axios.post('https://controle-passagens.onrender.com/add-bus', payload);
         }
 
-        setNewBus({ name: '', totalSeats: 30, elderly: 2, teen: 3, common: 25 });
+        setNewBus({ name: '', totalSeats: 30, idoso: 2, passeLivre: 3, comum: 25 });
         fetchBuses();
     };
 
@@ -57,9 +57,9 @@ export default function AdminPage() {
         setNewBus({
             name: bus.name,
             totalSeats: bus.totalSeats,
-            elderly: bus.limits.elderly,
-            teen: bus.limits.teen,
-            common: bus.limits.common
+            idoso: bus.limits.idoso,
+            passeLivre: bus.limits.passeLivre,
+            comum: bus.limits.comum
         });
         setEditingBusId(bus._id);
     };
@@ -92,11 +92,11 @@ export default function AdminPage() {
                 <label className="label">Total de Vagas</label>
                 <input name="totalSeats" type="number" placeholder="Total de Vagas" className="form-control mb-2" value={newBus.totalSeats} onChange={handleChange} />
                 <label className="label">Vagas para Idosos</label>
-                <input name="elderly" type="number" placeholder="Vagas para Idosos" className="form-control mb-2" value={newBus.elderly} onChange={handleChange} />
+                <input name="idoso" type="number" placeholder="Vagas para Idosos" className="form-control mb-2" value={newBus.idoso} onChange={handleChange} />
                 <label className="label">Vagas para Adolescentes</label>
-                <input name="teen" type="number" placeholder="Vagas para Adolescentes" className="form-control mb-2" value={newBus.teen} onChange={handleChange} />
+                <input name="passeLivre" type="number" placeholder="Vagas para Adolescentes" className="form-control mb-2" value={newBus.passeLivre} onChange={handleChange} />
                 <label className="label">Vagas Comuns</label>
-                <input name="common" type="number" placeholder="Vagas Comuns" className="form-control mb-2" value={newBus.totalSeats - newBus.elderly - newBus.teen} onChange={handleChange} />
+                <input name="comum" type="number" placeholder="Vagas Comuns" className="form-control mb-2" value={newBus.totalSeats - newBus.idoso - newBus.passeLivre} onChange={handleChange} />
 
                 <button onClick={addOrUpdateBus} className="btn btn-primary">
                     {editingBusId ? 'Salvar Alterações' : 'Adicionar Ônibus'}
@@ -108,9 +108,9 @@ export default function AdminPage() {
                 <div key={bus._id} className="card mb-3 p-3">
                     <h5>{bus.name}</h5>
                     <p><strong>Total de Vagas:</strong> {bus.totalSeats}</p>
-                    <p>Idosos: {bus.reserved.elderly}/{bus.limits.elderly}</p>
-                    <p>Adolescentes: {bus.reserved.teen}/{bus.limits.teen}</p>
-                    <p>Comum: {bus.reserved.common}/{bus.limits.common}</p>
+                    <p>Idosos: {bus.reserved.idoso}/{bus.limits.idoso}</p>
+                    <p>Adolescentes: {bus.reserved.passeLivre}/{bus.limits.passeLivre}</p>
+                    <p>Comum: {bus.reserved.comum}/{bus.limits.comum}</p>
 
                     <div className="mt-2">
                         <button onClick={() => startEditing(bus)} className="btn btn-warning btn-sm me-2">Editar</button>
