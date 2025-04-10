@@ -86,9 +86,9 @@ const [minhasReservas, setMinhasReservas] = useState([]);
 
             <label>Tipo</label>
             <select className="form-select mb-2" name="type" value={form.type} onChange={handleChange}>
-                <option value="common">Comum</option>
-                <option value="elderly">Idoso</option>
-                <option value="freepass">Passe Livre</option>
+                <option value="comum">Comum</option>
+                <option value="idoso">Idoso</option>
+                <option value="passeLivre">Passe Livre</option>
             </select>
 
             <button onClick={handleSubmit} className="btn btn-primary">Enviar Solicitação</button>
