@@ -73,14 +73,14 @@ const busSchema = new mongoose.Schema({
     name: String,
     totalSeats: { type: Number, default: 30 }, // Sempre 30 vagas
     reserved: { 
-        elderly: { type: Number, default: 0 }, 
-        teen: { type: Number, default: 0 }, 
-        common: { type: Number, default: 0 } 
+        idoso: { type: Number, default: 0 }, 
+        passeLivre: { type: Number, default: 0 }, 
+        comum: { type: Number, default: 0 } 
     },
     limits: { 
-        elderly: { type: Number, default: 2 }, 
-        teen: { type: Number, default: 3 }, 
-        common: { type: Number, default: 25 } 
+        idoso: { type: Number, default: 2 }, 
+        passeLivre: { type: Number, default: 3 }, 
+        comum: { type: Number, default: 25 } 
     }
 });
 
@@ -109,7 +109,7 @@ app.post('/reserve', async (req, res) => {
     if (!bus) return res.status(404).send('Ônibus não encontrado');
 
     // Verifica se ainda há vagas no total de 30
-    const totalReserved = bus.reserved.elderly + bus.reserved.teen + bus.reserved.common;
+    const totalReserved = bus.reserved.idoso + bus.reserved.passeLivre + bus.reserved.comum;
     if (totalReserved >= bus.totalSeats) {
         return res.status(400).json({ success: false, message: 'Todas as vagas foram ocupadas!' });
     }
