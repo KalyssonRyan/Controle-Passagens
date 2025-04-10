@@ -85,7 +85,6 @@ const busSchema = new mongoose.Schema({
 });
 
 const Bus = mongoose.model('Bus', busSchema);
-const Ticket = mongoose.model('Ticket', ticketSchema);
 
 io.on('connection', async (socket) => {
     console.log('Novo cliente conectado');
