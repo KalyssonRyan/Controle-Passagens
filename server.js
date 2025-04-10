@@ -365,8 +365,10 @@ app.post('/reservar', authMiddleware, async (req, res) => {
     }
   
     // Atualiza reserva
-    reserva.status = 'confirmada';
+    
     bus.reserved[tipo]++;
+    await bus.save();
+    reserva.status = 'confirmada';
     await reserva.save();
   
     // Cria ticket automaticamente
