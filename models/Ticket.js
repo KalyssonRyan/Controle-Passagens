@@ -8,6 +8,7 @@ const ticketSchema = new mongoose.Schema({
   type: String,
   date: String,
   time: String,
+  compradoPor: String,
   createdAt: { type: Date, default: Date.now }
 });
 
