@@ -6,7 +6,6 @@ const http = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const { v4: uuidv4 } = require('uuid');
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const session = require('express-session');
@@ -17,6 +16,8 @@ const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const Reserva = require('./models/Reserva');
+const Ticket = require('./models/Ticket');
+const { v4: uuidv4 } = require('uuid');
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -340,40 +341,48 @@ app.post('/reservar', authMiddleware, async (req, res) => {
     }
   });
 
-  app.put('/confirmar-reserva/:id', authMiddleware, async (req, res) => {
-    try {
-      const reserva = await Reserva.findById(req.params.id);
-      if (!reserva) return res.status(404).json({ message: 'Reserva não encontrada' });
+  app.put('/confirmar-reserva/:id', async (req, res) => {
+    const reserva = await Reserva.findById(req.params.id).populate('busId userId');
+    if (!reserva) return res.status(404).json({ message: 'Reserva não encontrada' });
   
-      const bus = await Bus.findById(reserva.busId);
-      if (!bus) return res.status(404).json({ message: 'Ônibus não encontrado' });
+    // Verifica limite por tipo
+    const tipo = reserva.type;
+    const bus = reserva.busId;
+    const data = reserva.date;
+    const hora = reserva.time;
   
-      // Contar quantas reservas já foram confirmadas
-      const jaConfirmadas = await Reserva.countDocuments({
-        busId: reserva.busId,
-        date: reserva.date,
-        time: reserva.time,
-        type: reserva.type,
-        status: 'confirmada'
-      });
+    const totalConfirmadas = await Reserva.countDocuments({
+      busId: bus._id,
+      type: tipo,
+      date: data,
+      time: hora,
+      status: 'confirmada'
+    });
   
-      // Pegando o limite máximo para o tipo
-      const limiteMax = bus.limits[reserva.type];
-  
-      if (jaConfirmadas >= limiteMax) {
-        return res.status(400).json({ message: `Limite atingido para o tipo ${reserva.type}` });
-      }
-  
-      // Confirmar a reserva
-      reserva.status = 'confirmada';
-      await reserva.save();
-  
-      res.json({ success: true, message: 'Reserva confirmada com sucesso!' });
-  
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ message: 'Erro ao confirmar reserva' });
+    const limite = bus.limits[tipo];
+    if (totalConfirmadas >= limite) {
+      return res.status(400).json({ message: 'Limite de reservas atingido para este tipo e horário' });
     }
+  
+    // Atualiza reserva
+    reserva.status = 'confirmada';
+    await reserva.save();
+  
+    // Cria ticket automaticamente
+    const novoTicket = await Ticket.create({
+      userId: reserva.userId._id,
+      busId: bus._id,
+      reservaId: reserva._id,
+      code: uuidv4(),
+      type: tipo,
+      date: data,
+      time: hora
+    });
+  
+    return res.json({
+      message: 'Reserva confirmada e passagem emitida!',
+      ticket: novoTicket
+    });
   });
 
   app.get('/reservas-pendentes', authMiddleware, async (req, res) => {
