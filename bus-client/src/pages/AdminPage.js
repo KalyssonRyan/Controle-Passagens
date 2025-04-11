@@ -5,13 +5,15 @@ import { Modal, Button } from 'react-bootstrap';
 
 export default function AdminPage() {
     const [buses, setBuses] = useState([]);
-    const [newBus, setNewBus] = useState({
+    const [newBus, setNewBus] = useState({ 
         name: '',
         totalSeats: 30,
-        idoso: 2,
-        passeLivre: 3,
-        comum: 25
-    });
+        limits: { 
+          idoso: 2, 
+          passeLivre: 3, 
+          comum: 30 
+        } 
+      });
     const [editingBusId, setEditingBusId] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [busToDelete, setBusToDelete] = useState(null);

@@ -79,7 +79,7 @@ const busSchema = new mongoose.Schema({
     },
     limits: { 
         idoso: { type: Number, default: 2 }, 
-        passeLivre: { type: Number, default: 3 }, 
+        passeLivre: { type: Number, default: 4 }, 
         comum: { type: Number, default: 25 } 
     }
 });
