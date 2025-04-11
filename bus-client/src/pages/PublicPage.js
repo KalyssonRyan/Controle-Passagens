@@ -26,7 +26,7 @@ export default function PublicPage() {
         <div>
             <h2>Consulta Pública</h2>
             {buses.map(bus => {
-                const total = (bus.reserved?.elderly || 0) + (bus.reserved?.teen || 0) + (bus.reserved?.common || 0);
+                const total = (bus.reserved?.idoso || 0) + (bus.reserved?.passeLivre || 0) + (bus.reserved?.comum || 0);
                 return (
                     <div key={bus._id} className="card p-3 mb-2">
                         <h5>{bus.name}</h5>
