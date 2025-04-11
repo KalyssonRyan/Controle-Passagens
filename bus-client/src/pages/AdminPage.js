@@ -29,7 +29,20 @@ export default function AdminPage() {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setNewBus(prev => ({ ...prev, [name]: value }));
+
+        if(['idoso','passeLivre','comum'].includes(name)){
+            setNewBus(prev =>({
+                ...prev,
+                limits: {
+                    ...prev.limits,
+                    [name]:Number(value)
+                }
+            }));
+        }
+        else{
+            setNewBus(prev => ({ ...prev, [name]: value }));
+
+        }
     };
 
     const addOrUpdateBus = async () => {
@@ -59,9 +72,11 @@ export default function AdminPage() {
         setNewBus({
             name: bus.name,
             totalSeats: bus.totalSeats,
-            idoso: bus.limits.idoso,
-            passeLivre: bus.limits.passeLivre,
-            comum: bus.limits.comum
+            limits :{
+                idoso: bus.limits?.idoso || 0,
+                passeLivre: bus.limits?.passeLivre || 0,
+                comum: bus.limits?.comum || 0
+            }
         });
         setEditingBusId(bus._id);
     };
