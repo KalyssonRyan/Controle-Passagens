@@ -11,7 +11,7 @@ export default function AdminPage() {
         limits: { 
           idoso: 2, 
           passeLivre: 4, 
-          comum: 30 
+          comum: 34 
         } 
       });
     const [editingBusId, setEditingBusId] = useState(null);
@@ -64,7 +64,7 @@ export default function AdminPage() {
             await axios.post('https://controle-passagens.onrender.com/add-bus', payload);
         }
 
-        setNewBus({ name: '', totalSeats: 30, idoso: 2, passeLivre: 3, comum: 25 });
+        setNewBus({ name: '', totalSeats: 40, limits: {idoso: 2, passeLivre:4, comum: 34}});
         fetchBuses();
     };
 
@@ -109,9 +109,9 @@ export default function AdminPage() {
                 <label className="label">Total de Vagas</label>
                 <input name="totalSeats" type="number" placeholder="Total de Vagas" className="form-control mb-2" value={newBus.totalSeats} onChange={handleChange} />
                 <label className="label">Vagas para Idosos</label>
-                <input name="idoso" type="number" placeholder="Vagas para Idosos" className="form-control mb-2" value={newBus.limits.idoso} onChange={handleChange} />
-                <label className="label">Vagas para Adolescentes</label>
-                <input name="passeLivre" type="number" placeholder="Vagas para Adolescentes" className="form-control mb-2" value={newBus.limits.passeLivre} onChange={handleChange} />
+                <input name="idoso" type="number" placeholder="Vagas para Idosos" className="form-control mb-2" value={newBus.limits.idoso ?? ''} onChange={handleChange} />
+                <label className="label">Vagas para Passe Livre</label>
+                <input name="passeLivre" type="number" placeholder="Vagas para passe Livre" className="form-control mb-2" value={newBus.limits.passeLivre ?? ''} onChange={handleChange} />
                 <label className="label">Vagas Comuns</label>
                 <input name="comum" type="number" placeholder="Vagas Comuns" className="form-control mb-2" value={newBus.totalSeats - newBus.limits.idoso - newBus.limits.passeLivre} onChange={handleChange} />
 
