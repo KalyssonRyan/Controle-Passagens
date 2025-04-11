@@ -33,7 +33,7 @@ export default function PublicPage() {
                         <p>Total de Vagas: {bus.totalSeats}</p>
                         <p>Vagas Ocupadas: {total}</p>
                         <p>Vagas Disponíveis: {bus.totalSeats - total}</p>
-                        <p>Vagas Idosos disponivel: {bus.limits.elderly - bus.reserved.elderly  }</p>
+                        <p>Vagas Idosos disponivel: {bus.limits.idoso - bus.reserved.idoso  }</p>
                     </div>
                 );
             })}

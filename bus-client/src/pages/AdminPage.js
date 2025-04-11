@@ -38,9 +38,9 @@ export default function AdminPage() {
             totalSeats: Number(newBus.totalSeats),
             reserved: { idoso: 0, passeLivre: 0, comum: 0 },
             limits: {
-                idoso: Number(newBus.idoso),
-                passeLivre: Number(newBus.passeLivre),
-                comum: Number(newBus.comum),
+                idoso: Number(newBus.limits.idoso),
+                passeLivre: Number(newBus.limits.passeLivre),
+                comum: Number(newBus.limits.comum),
             },
         };
 
