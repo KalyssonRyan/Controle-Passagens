@@ -7,10 +7,10 @@ export default function AdminPage() {
     const [buses, setBuses] = useState([]);
     const [newBus, setNewBus] = useState({ 
         name: '',
-        totalSeats: 30,
+        totalSeats: 40,
         limits: { 
           idoso: 2, 
-          passeLivre: 3, 
+          passeLivre: 4, 
           comum: 30 
         } 
       });
@@ -94,11 +94,11 @@ export default function AdminPage() {
                 <label className="label">Total de Vagas</label>
                 <input name="totalSeats" type="number" placeholder="Total de Vagas" className="form-control mb-2" value={newBus.totalSeats} onChange={handleChange} />
                 <label className="label">Vagas para Idosos</label>
-                <input name="idoso" type="number" placeholder="Vagas para Idosos" className="form-control mb-2" value={newBus.idoso} onChange={handleChange} />
+                <input name="idoso" type="number" placeholder="Vagas para Idosos" className="form-control mb-2" value={newBus.limits.idoso} onChange={handleChange} />
                 <label className="label">Vagas para Adolescentes</label>
-                <input name="passeLivre" type="number" placeholder="Vagas para Adolescentes" className="form-control mb-2" value={newBus.passeLivre} onChange={handleChange} />
+                <input name="passeLivre" type="number" placeholder="Vagas para Adolescentes" className="form-control mb-2" value={newBus.limits.passeLivre} onChange={handleChange} />
                 <label className="label">Vagas Comuns</label>
-                <input name="comum" type="number" placeholder="Vagas Comuns" className="form-control mb-2" value={newBus.totalSeats - newBus.idoso - newBus.passeLivre} onChange={handleChange} />
+                <input name="comum" type="number" placeholder="Vagas Comuns" className="form-control mb-2" value={newBus.totalSeats - newBus.limits.idoso - newBus.limits.passeLivre} onChange={handleChange} />
 
                 <button onClick={addOrUpdateBus} className="btn btn-primary">
                     {editingBusId ? 'Salvar Alterações' : 'Adicionar Ônibus'}
