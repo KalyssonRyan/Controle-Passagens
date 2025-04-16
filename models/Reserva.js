@@ -6,7 +6,7 @@ const reservaSchema = new mongoose.Schema({
   date: { type: String, required: true }, // Ex: '2025-04-10'
   time: { type: String, required: true }, // Ex: '08:00'
   type: { type: String, enum: ['comum', 'idoso', 'passeLivre'], required: true },
-  status: { type: String, enum: ['pendente', 'confirmada', 'rejeitada'], default: 'pendente' },
+  status: { type: String, enum: ['pendente', 'confirmada', 'rejeitada','cancelada'], default: 'pendente' },
   createdAt: { type: Date, default: Date.now }
 });
 
