@@ -40,7 +40,7 @@ export default function SolicitarReservaPage() {
         try {
             await axios.delete('https://controle-passagens.onrender.com/cancelarReserva/${id}', {
                 headers: {
-                    Authorization: 'Bearer ${getToken()}'
+                    Authorization: `Bearer ${getToken()}`
                 }
             });
 
