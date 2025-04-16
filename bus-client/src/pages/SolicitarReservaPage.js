@@ -4,7 +4,7 @@ import { getToken } from '../auth';
 import Loader from '../components/Loader';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
-
+import { Modal, Button } from 'react-bootstrap';
 export default function SolicitarReservaPage() {
     const [buses, setBuses] = useState([]);
     const [form, setForm] = useState({
