@@ -14,13 +14,16 @@ export default function SolicitarReservaPage() {
         type: 'comum'
     });
     const [mensagem, setMensagem] = useState('');
-const [carregando, setCarregando] = useState(true);
-const [minhasReservas, setMinhasReservas] = useState([]);
+    const [carregando, setCarregando] = useState(true);
+    const [minhasReservas, setMinhasReservas] = useState([]);
+    const [reservaSelecionada, setReservaSelecionada] = useState(null);
+    const [mostrarModal, setMostrarModal] = useState(false);
+
     useEffect(() => {
         setCarregando(true);
         axios.get('https://controle-passagens.onrender.com/buses')
-            .then(res => {setBuses(res.data);setCarregando(false)});
-            buscarMinhasReservas();
+            .then(res => { setBuses(res.data); setCarregando(false) });
+        buscarMinhasReservas();
     }, []);
 
     const buscarMinhasReservas = async () => {
@@ -33,20 +36,24 @@ const [minhasReservas, setMinhasReservas] = useState([]);
             console.error('Erro ao buscar reservas', err);
         }
     };
-    const cancelarReserva = async (id) =>{
-        try{
-            await axios.delete('https://controle-passagens.onrender.com/cancelarReserva/${id}',{
-                headers:{
-                    Authorization : 'Bearer ${getToken()}'
+    const cancelarReserva = async (id) => {
+        try {
+            await axios.delete('https://controle-passagens.onrender.com/cancelarReserva/${id}', {
+                headers: {
+                    Authorization: 'Bearer ${getToken()}'
                 }
             });
 
             buscarMinhasReservas();
-        }catch(erro){
-            console.error('Erro ao cancelar reserva:',erro);
+        } catch (erro) {
+            console.error('Erro ao cancelar reserva:', erro);
         }
-        
+
     }
+    const confirmarCancelamento = (reserva) => {
+        setReservaSelecionada(reserva);
+        setMostrarModal(true);
+    };
     const handleChange = (e) => {
         const { name, value } = e.target;
         setForm(prev => ({ ...prev, [name]: value }));
@@ -62,7 +69,7 @@ const [minhasReservas, setMinhasReservas] = useState([]);
             setMensagem(err.response?.data?.message || 'Erro ao solicitar reserva');
         }
     };
-    if(carregando) return <Loader texto="Buscando Ônibus"/>;
+    if (carregando) return <Loader texto="Buscando Ônibus" />;
     return (
         <div className="container mt-4">
             <h2>Solicitar Reserva</h2>
@@ -75,24 +82,24 @@ const [minhasReservas, setMinhasReservas] = useState([]);
             </select>
 
             <div className="mb-3">
-    <label>Escolha a Data no Calendário:</label>
-    <Calendar
-        onChange={(date) => setForm(prev => ({
-            ...prev,
-            date: new Date(date).toISOString().split('T')[0]
-        }))}
-        tileClassName={({ date, view }) => {
-            if (view === 'month') {
-                const diasReservados = minhasReservas.map(r => r.date);
-                const hoje = date.toISOString().split('T')[0];
-                if (diasReservados.includes(hoje)) {
-                    return 'bg-warning text-white'; // visual destaca o dia
-                }
-            }
-        }}
-    />
-    <small className="text-muted">Data selecionada: <strong>{form.date || 'Nenhuma'}</strong></small>
-</div>
+                <label>Escolha a Data no Calendário:</label>
+                <Calendar
+                    onChange={(date) => setForm(prev => ({
+                        ...prev,
+                        date: new Date(date).toISOString().split('T')[0]
+                    }))}
+                    tileClassName={({ date, view }) => {
+                        if (view === 'month') {
+                            const diasReservados = minhasReservas.map(r => r.date);
+                            const hoje = date.toISOString().split('T')[0];
+                            if (diasReservados.includes(hoje)) {
+                                return 'bg-warning text-white'; // visual destaca o dia
+                            }
+                        }
+                    }}
+                />
+                <small className="text-muted">Data selecionada: <strong>{form.date || 'Nenhuma'}</strong></small>
+            </div>
 
             <label>Horário</label>
             <input type="time" className="form-control mb-2" name="time" value={form.time} onChange={handleChange} />
@@ -120,13 +127,33 @@ const [minhasReservas, setMinhasReservas] = useState([]);
                         <p><strong>Status:</strong> <span className={`badge bg-${r.status === 'confirmada' ? 'success' : 'warning'}`}>{r.status}</span></p>
 
                         {r.status === 'pendente' && (
-                            <button className="btn btn-danger btn-sm mt-2" onClick={() => cancelarReserva(r._id)}>Cancelar Reserva</button>
+                            <button className="btn btn-danger btn-sm mt-2" onClick={() => confirmarCancelamento(r)}>Cancelar Reserva</button>
                         )}
                     </div>
                 ))
+
             )}
+            <Modal show={mostrarModal} onHide={() => setMostrarModal(false)} centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>Confirmar Cancelamento</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    Tem certeza que deseja cancelar a reserva do dia <strong>{reservaSelecionada?.date}</strong> às <strong>{reservaSelecionada?.time}</strong>?
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setMostrarModal(false)}>
+                        Não, voltar
+                    </Button>
+                    <Button variant="danger" onClick={() => {
+                        cancelarReserva(reservaSelecionada._id);
+                        setMostrarModal(false);
+                    }}>
+                        Sim, cancelar
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </div>
 
-        
+
     );
 }
