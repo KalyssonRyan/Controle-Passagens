@@ -124,7 +124,7 @@ export default function SolicitarReservaPage() {
                         <p><strong>Data:</strong> {r.date}</p>
                         <p><strong>Horário:</strong> {r.time}</p>
                         <p><strong>Tipo:</strong> {r.type}</p>
-                        <p><strong>Status:</strong> <span className={`badge bg-${r.status === 'confirmada' ? 'success' : 'warning'}`}>{r.status}</span></p>
+                        <p><strong>Status:</strong> <span className={`badge bg-${r.status === 'confirmada' ? 'success' : r.status=== 'pendente' ? 'warning' : 'danger'}`}>{r.status}</span></p>
 
                         {r.status === 'pendente' && (
                             <button className="btn btn-danger btn-sm mt-2" onClick={() => confirmarCancelamento(r)}>Cancelar Reserva</button>
