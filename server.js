@@ -403,3 +403,29 @@ app.get('/minhas-reservas', authMiddleware, async (req, res) => {
       res.status(500).json({ message: 'Erro ao buscar suas reservas' });
     }
   });
+
+  app.delete('/cancelarReserva/:id',authMiddleware,async(req,res) =>{
+    const reserva = await Reserva.findById(req.params.id).populate('busId userId');
+
+    if (!reserva){
+      return res.status(404).json({ message: 'Reserva não encontrada'});
+    }
+
+    const isAdmin = req.userId &&(await User.findById(req.userId)).isAdmin;
+
+    if (reserva.userId._id.toString() !== req.userId &&!isAdmin){
+      return res.status(403).json({message : 'Você não tem permissão para cancelar essa reserva'});
+    }
+
+    if(reserva.status === 'confirmada'){
+      return res.status(400).json({message: 'Reserva já foi confirmada e não pode ser cancelada'});
+    }
+    if(reserva.status === 'cancelada'){
+      return res.status(400).json({message:'Reserva já está cancelada'});
+    }
+
+    reserva.status = 'cancelada';
+    await reserva.save();
+
+    return res.json({message: 'Reserva cancelada com Sucesso!'})
+  });
