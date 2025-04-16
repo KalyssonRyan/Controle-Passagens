@@ -33,7 +33,20 @@ const [minhasReservas, setMinhasReservas] = useState([]);
             console.error('Erro ao buscar reservas', err);
         }
     };
+    const cancelarReserva = async (id) =>{
+        try{
+            await axios.delete('https://controle-passagens.onrender.com/cancelarReserva/${id}',{
+                headers:{
+                    Authorization : 'Bearer ${getToken()}'
+                }
+            });
 
+            buscarMinhasReservas();
+        }catch(erro){
+            console.error('Erro ao cancelar reserva:',erro);
+        }
+        
+    }
     const handleChange = (e) => {
         const { name, value } = e.target;
         setForm(prev => ({ ...prev, [name]: value }));
