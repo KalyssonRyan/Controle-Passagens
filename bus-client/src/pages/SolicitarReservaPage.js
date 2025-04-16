@@ -38,7 +38,7 @@ export default function SolicitarReservaPage() {
     };
     const cancelarReserva = async (id) => {
         try {
-            await axios.delete('https://controle-passagens.onrender.com/cancelarReserva/${id}', {
+            await axios.delete(`https://controle-passagens.onrender.com/cancelarReserva/${id}`, {
                 headers: {
                     Authorization: `Bearer ${getToken()}`
                 }
