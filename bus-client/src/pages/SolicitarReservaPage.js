@@ -118,6 +118,10 @@ const [minhasReservas, setMinhasReservas] = useState([]);
                         <p><strong>Horário:</strong> {r.time}</p>
                         <p><strong>Tipo:</strong> {r.type}</p>
                         <p><strong>Status:</strong> <span className={`badge bg-${r.status === 'confirmada' ? 'success' : 'warning'}`}>{r.status}</span></p>
+
+                        {r.status === 'pendente' && (
+                            <button className="btn btn-danger btn-sm mt-2" onClick={() => cancelarReserva(r._id)}>Cancelar Reserva</button>
+                        )}
                     </div>
                 ))
             )}
